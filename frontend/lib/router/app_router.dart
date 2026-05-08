@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/data/auth_service.dart';
 import 'package:go_router/go_router.dart';
 import '../data/models/user_model.dart';
 import '../presentation/pages/login_page.dart';
@@ -19,44 +20,38 @@ abstract class AppRoutes {
   static const configuracoes = '/configuracoes';
 }
 
-/// Instância do GoRouter
-/// TODO: Substituir _isLoggedIn pela verificação real do token (SecureStorage)
-/// TODO: Adicionar redirect por perfil: redirect: _roleGuard
 GoRouter createRouter() {
   return GoRouter(
-    initialLocation: AppRoutes.dashboard, // trocar para login após auth
+    initialLocation: AppRoutes.login,
     debugLogDiagnostics: true,
-    redirect: (context, state) {
-      // TODO: Implementar guard de autenticação
-      // final isLoggedIn = AuthService.instance.isLoggedIn;
-      // if (!isLoggedIn && state.matchedLocation != AppRoutes.login) {
-      //   return AppRoutes.login;
-      // }
-      return null; // sem redirect por enquanto
+    redirect: (context, state) async {
+      final authService = AuthService();
+      final loggedIn = await authService.isLoggedIn;
+      final onLogin = state.matchedLocation == AppRoutes.login;
+      if (!loggedIn && !onLogin) return AppRoutes.login;
+      if (loggedIn && onLogin) return AppRoutes.dashboard;
+      return null;
     },
     routes: [
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: LoginPage(),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: LoginPage()),
       ),
       GoRoute(
         path: AppRoutes.dashboard,
         name: 'dashboard',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: DashboardPage(),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: DashboardPage()),
       ),
 
       // ── Rotas futuras ─────────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.usuarios,
         name: 'usuarios',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: _PlaceholderPage(title: 'Usuários'),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: _PlaceholderPage(title: 'Usuários')),
       ),
       GoRoute(
         path: AppRoutes.solicitacoes,
@@ -68,16 +63,14 @@ GoRouter createRouter() {
       GoRoute(
         path: AppRoutes.viagens,
         name: 'viagens',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: _PlaceholderPage(title: 'Viagens'),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: _PlaceholderPage(title: 'Viagens')),
       ),
       GoRoute(
         path: AppRoutes.veiculos,
         name: 'veiculos',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: _PlaceholderPage(title: 'Veículos'),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: _PlaceholderPage(title: 'Veículos')),
       ),
       GoRoute(
         path: AppRoutes.motoristas,
@@ -89,9 +82,8 @@ GoRouter createRouter() {
       GoRoute(
         path: AppRoutes.unidades,
         name: 'unidades',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: _PlaceholderPage(title: 'Unidades'),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: _PlaceholderPage(title: 'Unidades')),
       ),
       GoRoute(
         path: AppRoutes.relatorios,
@@ -130,14 +122,25 @@ class _PlaceholderPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.construction_rounded, size: 64, color: Color(0xFF1B3A8C)),
+            const Icon(
+              Icons.construction_rounded,
+              size: 64,
+              color: Color(0xFF1B3A8C),
+            ),
             const SizedBox(height: 16),
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF0F1F4D))),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0F1F4D),
+              ),
+            ),
             const SizedBox(height: 8),
-            const Text('Página em desenvolvimento',
-                style: TextStyle(color: Color(0xFF6B7280))),
+            const Text(
+              'Página em desenvolvimento',
+              style: TextStyle(color: Color(0xFF6B7280)),
+            ),
           ],
         ),
       ),
