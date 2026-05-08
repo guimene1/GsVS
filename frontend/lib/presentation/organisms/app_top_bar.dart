@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user_model.dart';
+import '../../data/auth_service.dart';
 import '../atoms/avatar_initials.dart';
 
 /// Organismo: Barra superior do sistema
@@ -84,13 +86,15 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
           const SizedBox(width: 8),
 
           // User info
-          PopupMenuButton<dynamic>(
+          PopupMenuButton<String>(
             offset: const Offset(0, 48),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            itemBuilder: (_) => <PopupMenuEntry<dynamic>>[
-              PopupMenuItem<dynamic>(
+            onSelected: (value) => _handleMenuSelection(value),
+            itemBuilder: (_) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'profile',
                 child: Row(
                   children: [
                     Icon(Icons.person_outline_rounded, size: 18),
@@ -99,7 +103,8 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
               ),
-              PopupMenuItem<dynamic>(
+              const PopupMenuItem<String>(
+                value: 'password',
                 child: Row(
                   children: [
                     Icon(Icons.lock_outline_rounded, size: 18),
@@ -108,8 +113,9 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
               ),
-              PopupMenuDivider(),
-              PopupMenuItem<dynamic>(
+              const PopupMenuDivider(),
+              const PopupMenuItem<String>(
+                value: 'logout',
                 child: Row(
                   children: [
                     Icon(
@@ -164,5 +170,24 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
     );
+  }
+
+  void _handleMenuSelection(String value) {
+    switch (value) {
+      case 'profile':
+        // TODO: Implementar navegação para perfil
+        break;
+      case 'password':
+        // TODO: Implementar navegação para alterar senha
+        break;
+      case 'logout':
+        _handleLogout();
+        break;
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    final authService = AuthService();
+    await authService.logout();
   }
 }

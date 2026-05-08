@@ -15,14 +15,15 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         $field = filter_var($request->credential, FILTER_VALIDATE_EMAIL) ? 'email' : 'cpf';
-        $credentials = [$field => $request->credential,
+        $credentials = [
+            $field => $request->credential,
             'password' => $request->password,
-            ];
-            if (!$token = Auth::attempt($credentials)){
-                return response()-> json(['message' => 'Credenciais inválidas'], 401);
+        ];
+        if (!$token = Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Credenciais inválidas'], 401);
 
-            }
-            return $this->respondWithToken($token);
+        }
+        return $this->respondWithToken($token);
     }
 
     public function me()
@@ -43,9 +44,10 @@ class AuthController extends Controller
         $user = Auth::user();
         return response()->json([
             'token' => $token,
-            'token_type'=>'bearer',
+            'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
             'user' => [
+                'id' => $user->id,
                 'name' => $user->name,
                 'cpf' => $user->cpf,
                 'email' => $user->email,
