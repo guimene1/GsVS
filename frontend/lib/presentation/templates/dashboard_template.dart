@@ -5,46 +5,35 @@ import '../../router/app_router.dart';
 import '../organisms/app_sidebar.dart';
 import '../organisms/app_top_bar.dart';
 
-class DashboardTemplate extends StatefulWidget {
+class DashboardTemplate extends StatelessWidget {
   final UserModel user;
-  final bool isLoading;
 
   const DashboardTemplate({
     super.key,
     required this.user,
-    this.isLoading = false,
   });
-
-  @override
-  State<DashboardTemplate> createState() => _DashboardTemplateState();
-}
-
-class _DashboardTemplateState extends State<DashboardTemplate> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 900;
-        return isMobile ? _buildMobileLayout() : _buildDesktopLayout();
+        return isMobile ? _buildMobileLayout(context) : _buildDesktopLayout(context);
       },
     );
   }
 
-  // --- Layouts Principais ---
-
-  Widget _buildDesktopLayout() {
+  Widget _buildDesktopLayout(BuildContext context) {
     return Row(
       children: [
         AppSidebar(
-          user: widget.user,
+          user: user,
           currentRoute: AppRoutes.dashboard,
         ),
         Expanded(
           child: Scaffold(
             backgroundColor: AppColors.background,
-            appBar: AppTopBar(user: widget.user),
+            appBar: AppTopBar(user: user),
             body: _buildContent(),
           ),
         ),
@@ -52,18 +41,20 @@ class _DashboardTemplateState extends State<DashboardTemplate> {
     );
   }
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey,
       backgroundColor: AppColors.background,
       appBar: AppTopBar(
-        user: widget.user,
-        onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+        user: user,
+        onMenuTap: () => scaffoldKey.currentState?.openDrawer(),
       ),
       drawer: Drawer(
         width: 250,
         child: AppSidebar(
-          user: widget.user,
+          user: user,
           currentRoute: AppRoutes.dashboard,
         ),
       ),
@@ -71,82 +62,36 @@ class _DashboardTemplateState extends State<DashboardTemplate> {
     );
   }
 
-  // --- Conteúdo Dinâmico ---
-
   Widget _buildContent() {
-    if (widget.isLoading) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.primary));
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: IntrinsicHeight(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildPageHeader(),
-                    const SizedBox(height: 32),
-                    
-                    // Área Central: Aqui entrará a lógica das abas ou mensagem de boas-vindas
-                    const Expanded(
-                      child: Center(
-                        child: Text(
-                          'Selecione um módulo no menu lateral para começar.',
-                          style: TextStyle(color: Color(0xFF6B7280), fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    
-                    const Spacer(), // Empurra o footer para o final
-                    _buildFooter(),
-                  ],
-                ),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.dashboard_rounded,
+              size: 80,
+              color: AppColors.primary,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Dashboard',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1F2937),
               ),
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildPageHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Olá, ${widget.user.name.split(' ').first}!',
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF0F1F4D),
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Bem-vindo(a) ao Sistema de Gestão de Viagens e Solicitações (GsVS).',
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFooter() {
-    return const Padding(
-      padding: EdgeInsets.only(top: 40, bottom: 8),
-      child: Center(
-        child: Text(
-          '© 2024 GsVS - Prefeitura Municipal de Prudentópolis. Todos os direitos reservados.',
-          style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
-          textAlign: TextAlign.center,
+            const SizedBox(height: 12),
+            const Text(
+              'Selecione um módulo no menu lateral para começar.',
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+          ],
         ),
       ),
     );
