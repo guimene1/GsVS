@@ -91,7 +91,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            onSelected: (value) => _handleMenuSelection(value),
+            onSelected: (value) => _handleMenuSelection(context, value),
             itemBuilder: (_) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
                 value: 'profile',
@@ -172,7 +172,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  void _handleMenuSelection(String value) {
+  void _handleMenuSelection(BuildContext context, String value) {
     switch (value) {
       case 'profile':
         // TODO: Implementar navegação para perfil
@@ -181,13 +181,16 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
         // TODO: Implementar navegação para alterar senha
         break;
       case 'logout':
-        _handleLogout();
+        _handleLogout(context);
         break;
     }
   }
 
-  Future<void> _handleLogout() async {
+  Future<void> _handleLogout(BuildContext context) async {
     final authService = AuthService();
     await authService.logout();
+    if (context.mounted) {
+      GoRouter.of(context).go('/login');
+    }
   }
 }
