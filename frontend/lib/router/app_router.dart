@@ -10,6 +10,7 @@ abstract class AppRoutes {
   static const login = '/';
   static const dashboard = '/dashboard';
   static const usuarios = '/usuarios';
+  static const perfis = '/perfis';
   static const solicitacoes = '/solicitacoes';
   static const viagens = '/viagens';
   static const veiculos = '/veiculos';
@@ -52,6 +53,12 @@ GoRouter createRouter() {
         name: 'usuarios',
         pageBuilder: (context, state) =>
             const NoTransitionPage(child: _PlaceholderPage(title: 'Usuários')),
+      ),
+      GoRoute(
+        path: AppRoutes.perfis,
+        name: 'perfis',
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: _PlaceholderPage(title: 'Perfis de Acesso')),
       ),
       GoRoute(
         path: AppRoutes.solicitacoes,

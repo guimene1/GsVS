@@ -23,6 +23,7 @@ class _AppSidebarState extends State<AppSidebar> {
 
   static const _navItems = [
     _NavItem(Icons.dashboard_rounded, 'Dashboard', AppRoutes.dashboard),
+    _NavItem(Icons.admin_panel_settings_rounded, 'Perfis de Acesso', AppRoutes.perfis),
     _NavItem(Icons.people_alt_rounded, 'Usuários', AppRoutes.usuarios),
     _NavItem(Icons.assignment_rounded, 'Solicitações', AppRoutes.solicitacoes),
     _NavItem(Icons.flight_takeoff_rounded, 'Viagens', AppRoutes.viagens),
